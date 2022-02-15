@@ -1,0 +1,31 @@
+main server
+clients
+
+data protocol
+
+each message has:
+id_number
+data
+data_len
+
+catch deliver name by .split(":")[0] z 
+|id rules:
+
+id = 0 unrecognized error please try again
+id=1 new client want to join the server
+id=2 an existing client want to join the server
+
+id=3 invalid username
+id=4 invalid password
+id=5 a user with this name is already exists
+id=6 username is not in data base
+id=7 password isnt matches the username
+
+id= 200telling the client that that he signed up successfully
+id = 201 telling the user that he logged in succesfully
+id = 300 user sent a message to send to all the others
+id = 301 announcement of admin 
+id=302 sending all clients the message a aspecific user sent
+id = 400 for both sides it means the thread to keep alive
+id = 500
+id = 600
