@@ -37,6 +37,9 @@ successful_sign_up_msg_id = 200
 """ telling the user that he logged in successfully """
 successful_log_in_msg_id = 201
 
+""" sending the client the list of the current connected usernames"""
+clients_list_msg_id = 700
+
 
 """ client sent a message to all other client """
 client_group_message_msg_id = 300

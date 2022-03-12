@@ -83,6 +83,11 @@ correct_password = """
 correct_password_instructions_message_label = tk.Label(window, text=correct_username, fg='red', bg='light blue', font=("Arial", 10))
 
 
+client_list_text = tk.Text(window, bg='light blue', font=("Arial", 8), state=tk.DISABLED)
+show_client_list_button = tk.Button(window, bg='white', text='users')
+close_client_list_button = tk.Button(window, bg="white", text='close')
+
+
 """ welcome window """
 log_in_button = tk.Button(window, text='log in', bg='white', font=("Arial", 14))
 sign_up_button = tk.Button(window, text='sign up', bg='white', font=("Arial", 14))

@@ -1,7 +1,7 @@
 from message import take_apart_msg
 import chatApp_constant
-from client_gui import start_chat_window, update_text_screen, activate_close_client_message
-from set_all_windows import activate_invalid_password_message,\
+from client_gui import start_chat_window, update_text_screen, activate_close_client_message, update_clients_list
+from set_all_windows import activate_invalid_password_message, \
     activate_invalid_username_message, activate_username_is_taken_message, \
     activate_username_not_in_data_base_message, activate_pass_not_match_username_message
 
@@ -11,11 +11,14 @@ def handle_received_message(receive):
         this function gets the receive from
         the server and handle the message according
         to the protocol
+    :param receive:
+    :return:
     """
     message = take_apart_msg(receive)
     message_id = message["id"]
 
     if message_id == chatApp_constant.health_check_msg_id:
+        """ in health check, the server sends us a list of all the current connected clients to the chat"""
         pass  # we ignore id=400 because its just a check of the server to see that we still in connection
 
     elif message_id == chatApp_constant.server_is_off_msg_id:
@@ -47,6 +50,9 @@ def handle_received_message(receive):
     elif message_id == chatApp_constant.admin_announcement_msg_id:  # group announcement
         # the msg_data we got is built in the form of "name,announcement..."
         update_text_screen(message["data"])
+
+    elif message_id == chatApp_constant.clients_list_msg_id:
+        update_clients_list(message["data"])
 
     else:
         print("[UNRECOGNIZED ID MESSAGE]")

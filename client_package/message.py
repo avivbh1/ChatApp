@@ -9,7 +9,7 @@ class Message:
         self._id = id
         self._data = data
         self._data_len = len(data)
-        self.output = f"{self.id}|{self.data}|{self.data_len}"
+        self.msg_in_list = [str(self._id), self._data, str(self._data_len)]
 
     @property
     def id(self):
@@ -24,7 +24,7 @@ class Message:
         return self._data_len
 
     def __str__(self):
-        return f"{self.id}|{self.data}|{self.data_len}"
+        return f"{chr(298)}".join(self.msg_in_list)
 
 
 def take_apart_msg(msg_to_take_apart):
@@ -36,7 +36,6 @@ def take_apart_msg(msg_to_take_apart):
     :param msg_to_take_apart:
     :return: message_dict
     """
-    splitted_msg = str(msg_to_take_apart).split("|")
+    splitted_msg = str(msg_to_take_apart).split(f"{chr(298)}")
     message_dict = {"id": int(splitted_msg[0]), "data": splitted_msg[1], "data length": int(splitted_msg[2])}
     return message_dict
-    

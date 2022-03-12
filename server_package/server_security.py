@@ -215,4 +215,3 @@ def insert_data_to_file(username, password):
     text_to_file = f"{STATIC_NUMBER_OF_ACCOUNTS},{encrypted_username},{encrypted_password}\n"  # the form of the data base
     with open(chatApp_constant.data_base_path, "a") as file:
         file.write(text_to_file)
-

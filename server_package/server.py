@@ -1,9 +1,17 @@
 import threading
-from message import take_apart_msg, Message
+from server_message import take_apart_msg, Message
 import chatApp_constant
 from server_security import try_create_new_account, check_existing_account
 from set_up_server_socket import *  # setup the socket
 from time import sleep
+
+
+def send_clients_list(client_conn):
+    id_msg = chatApp_constant.clients_list_msg_id
+    data_msg = ",".join([name for name in conn_and_names.values() if name != ""])  # names separated by comma
+    message = Message(id_msg, data_msg)
+    broadcast(msg=message)
+    #client_conn.send(str(message).encode())
 
 
 def send_error_message(client_conn):
@@ -36,6 +44,7 @@ def keep_connection_alive(client_conn, client_addr):
     print(f"[DISCONNECTED] {client_addr}")
     username_left = remove_user_by_connection(client_conn)
     announce_other_clients_user_disconnected(username_left)
+    send_clients_list(client_conn)
 
 
 def announce_other_clients_user_disconnected(username_left):
@@ -50,14 +59,14 @@ def announce_other_clients_user_disconnected(username_left):
     broadcast(message)
 
 
-def share_clients_with_client_message(data):
+def share_clients_with_client_message(data_msg):
     """
     gets the data to transfer everyone
     :param data:
     :return:
     """
     msg_id = chatApp_constant.admin_announcement_msg_id  # by protocol it means for the clients to display a message on the screen
-    message = Message(id=msg_id, data=data)
+    message = Message(id=msg_id, data=data_msg)
     broadcast(message)
 
 
@@ -104,13 +113,14 @@ def broadcast(msg, deliver_conn=None):
         # if it didn't passed as an argument we sent it to all of the clients
         for client_conn in conn_and_names.keys():
             try:
-                if conn_and_names[client_conn] != "":  # "" means the client isn't in the chat currently
+                if conn_and_names[client_conn] != "":  # "" means the client got disconnected
                     client_conn.send(str(msg).encode())  # sending str(msg)
             except Exception as e:  # if we're entering the exception, it means the client isnt found on the other side of the socket
                 print(e)
                 username_left = remove_user_by_connection(client_conn)
                 disconnect_client(client_conn)
                 announce_other_clients_user_disconnected(username_left=username_left)
+                send_clients_list(client_conn)
 
     elif deliver_conn in conn_and_names.keys():
         # sending the msg to all the clients in the server except the one who sent it
@@ -125,6 +135,7 @@ def broadcast(msg, deliver_conn=None):
                     username_left = remove_user_by_connection(client_conn=client_conn)
                     disconnect_client(client_conn)
                     announce_other_clients_user_disconnected(username_left=username_left)
+                    send_clients_list(client_conn)
 
 
 def handle_client(client_conn, client_addr):
@@ -163,6 +174,9 @@ def handle_client(client_conn, client_addr):
 
                 response_message = Message(id=response_msg_id, data=data_msg)  # building the msg to send back to the client
                 client_conn.send(str(response_message).encode())  # sending the message correctly
+                if response_msg_id == chatApp_constant.successful_sign_up_msg_id:
+                    """ sending the list of the clients that are connected currently"""
+                    send_clients_list(client_conn=client_conn)
 
             elif given_message["id"] == chatApp_constant.existing_client_msg_id:  # it means there is a client with an existing account who wants to join the chat
                 response_msg_id = check_existing_account(client_conn=client_conn, message=given_message)  # this function returns the id message accordingly
@@ -181,11 +195,15 @@ def handle_client(client_conn, client_addr):
 
                 message = Message(response_msg_id, response_msg_data)  # building the msg to send back to the client
                 client_conn.send(str(message).encode())  # sending the message correctly
+                if response_msg_id == chatApp_constant.successful_log_in_msg_id:
+                    """ sending the list of the clients that are connected currently"""
+                    send_clients_list(client_conn=client_conn)
 
             elif given_message["id"] == chatApp_constant.client_disconnected_msg_id:
                 username_left = remove_user_by_connection(client_conn=client_conn)
                 print("aviv")
                 announce_other_clients_user_disconnected(username_left=username_left)
+                send_clients_list(client_conn=client_conn)
                 # we're not really disconnecting the socket of this client because he just disconnected from a
                 # specific user, but didn't closed his client
 

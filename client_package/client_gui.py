@@ -18,6 +18,19 @@ def disconnect_from_server():
     back_to_home_window()
 
 
+def unplace_clients_list():
+    client_list_text.place_forget()
+    close_client_list_button.place_forget()
+    show_client_list_button.place(x=375, y=5, height=20, width=30)
+
+
+def activate_clients_list():
+    show_client_list_button.place_forget()
+    client_list_text.place(x=275, y=10, height=120, width=100)
+    close_client_list_button.config(command=unplace_clients_list)
+    close_client_list_button.place(x=375, y=5, height=20, width=30)
+
+
 def activate_close_client_message():
     clean_window()
     close_client_frame.place(x=0, y=100, height=300, width=450)
@@ -38,6 +51,23 @@ def kill_client_socket():
     except Exception as e:
         pass
     print("[WE LEFT CHAT]")
+
+
+def update_clients_list(connected_clients):
+    """
+    this function gets the connected clients in string, names separated by comma
+     and prints it in the text widget of clients list
+    :param connected_clients:
+    :return:
+    """
+    output = "online: "
+    connected_clients = "\n".join(connected_clients.split(","))
+    output += connected_clients
+
+    client_list_text.config(state=tk.NORMAL)
+    client_list_text.delete('1.0', tk.END)
+    client_list_text.insert(tk.END, output)
+    client_list_text.config(state=tk.DISABLED)
 
 
 def update_text_screen(data):
@@ -66,6 +96,9 @@ def start_chat_window():
     chat_text_box.place(x=6, y=360, height=35, width=300)
     client_name_label.config(text=client_user_and_pass["username"])
     client_name_label.place(x=-5, y=400, height=20, width=120)
+
+    show_client_list_button.config(command=activate_clients_list)
+    show_client_list_button.place(x=375, y=5, height=20, width=30)
 
     chat_send_button.config(command=build_chat_message)
     chat_send_button.place(x=320, y=360, height=35, width=83)
