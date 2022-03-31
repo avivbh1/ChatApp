@@ -6,6 +6,7 @@ def client_send(client_socket, message):
     :return: None:
     """
     try:
+        print(message)
         client_socket.send(str(message).encode())  # sending the msg in the correct form of the protocol
     except Exception as e:
         print(e)

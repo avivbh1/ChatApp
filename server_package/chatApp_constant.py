@@ -60,4 +60,4 @@ client_disconnected_msg_id = 600
 health_check_msg_id = 400
 
 
-data_base_path = r"C:\Users\avivb\PycharmProjects\my_whatsapp\server_package\database.txt"
+data_base_path = r"database.txt"

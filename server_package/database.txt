@@ -1,10 +1,2 @@
-0,Dyly4,Dyly4
-1,Dyly45,Dyly4
-2,Dyly456,Dyly456
-3,Lgr456,Lgr456
-4,Wdplu4,Wdplu4
-5,Wdplu456,Wdplu456
-6,Doprj4,Doprj4
-7,Wdo45,Wdo45
-8,Wdpluqrwjd|4,Wdplu4
-9,Dulhoqrwvxshu4,Dulho44
+0,Dylyl45,Dylyl45
+1,Dyly456,Dyly456

@@ -124,7 +124,6 @@ def broadcast(msg, deliver_conn=None):
 
     elif deliver_conn in conn_and_names.keys():
         # sending the msg to all the clients in the server except the one who sent it
-        print(f"here {msg}")
         for client_conn in conn_and_names.keys():
             if client_conn != deliver_conn:
                 try:
@@ -201,7 +200,6 @@ def handle_client(client_conn, client_addr):
 
             elif given_message["id"] == chatApp_constant.client_disconnected_msg_id:
                 username_left = remove_user_by_connection(client_conn=client_conn)
-                print("aviv")
                 announce_other_clients_user_disconnected(username_left=username_left)
                 send_clients_list(client_conn=client_conn)
                 # we're not really disconnecting the socket of this client because he just disconnected from a
