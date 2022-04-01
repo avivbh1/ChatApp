@@ -80,7 +80,7 @@ correct_password = """
      - one digit at least
     """
 
-correct_password_instructions_message_label = tk.Label(window, text=correct_username, fg='red', bg='light blue', font=("Arial", 10))
+correct_password_instructions_message_label = tk.Label(window, text=correct_password, fg='red', bg='light blue', font=("Arial", 10))
 
 
 client_list_text = tk.Text(window, bg='light blue', font=("Arial", 8), state=tk.DISABLED)
