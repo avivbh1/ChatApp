@@ -1,7 +1,7 @@
 import threading
 from server_message import take_apart_msg, Message
 import chatApp_constant
-from server_security import try_create_new_account, check_existing_account
+from server_security import try_create_new_account, check_existing_account, initialize_db
 from set_up_server_socket import *  # setup the socket
 from time import sleep
 
@@ -236,4 +236,5 @@ def server_receive():
 
 
 if __name__ == '__main__':
+    #initialize_db()
     server_receive()

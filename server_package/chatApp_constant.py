@@ -61,3 +61,5 @@ health_check_msg_id = 400
 
 
 data_base_path = r"database.txt"
+accounts_db_path = r"accounts.db"
+#chatApp_constant.accounts_db_path

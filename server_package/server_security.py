@@ -1,6 +1,22 @@
 from set_up_server_socket import conn_and_names
 import chatApp_constant
+import sqlite3
 import encryption
+
+
+def initialize_db():
+    """
+        creating the data base file so it will be 'remembered' and created
+    """
+    conn = sqlite3.connect('accounts.db')
+    cursor = conn.cursor()
+
+    cursor.execute("""CREATE TABLE accounts (
+        username text,
+        password text
+        )""")
+    conn.commit()
+    conn.close()
 
 
 def form_username_and_password(receive):
@@ -84,18 +100,11 @@ def remove_user_from_data_base(username):
     :param username:
     :return:
     """
-    with open(chatApp_constant.data_base_path, "r+") as file:
-        users = (file.read().split("\n"))
-        for i in range(len(users) - 1):  # not running on the last one because its an empty brackets after the last \n
-            current_username = users[i].split(',')[1]
-            if username == encryption.decrypt_data(current_username):
-                users.remove(users[i])
-                break
-
-    data_base_text = "\n".join(users)
-    print(data_base_text)
-    with open(chatApp_constant.data_base_path, "w") as file:
-        file.write(data_base_text)
+    with sqlite3.connect(chatApp_constant.accounts_db_path) as conn:
+        cursor = conn.cursor()
+        encrypted_username = encryption.encrypt_data(username)
+        cursor.execute(f"DELETE * FROM accounts WHERE username = '{encrypted_username}'")
+        conn.commit()
 
 
 def get_password_by_user_name(username):
@@ -105,30 +114,32 @@ def get_password_by_user_name(username):
     :param username:
     :return:
     """
-    with open(chatApp_constant.data_base_path, "r") as file:
-        all_data_base = file.read().split("\n")[:-1]
-        if len(all_data_base) >= 1:
-            for user in all_data_base:
-                temp_pass = user.split(",")[1]
-                if username == encryption.decrypt_data(temp_pass):
-                    return encryption.decrypt_data(user.split(",")[2])
-    return None
+    with sqlite3.connect(chatApp_constant.accounts_db_path) as conn:
+
+        cursor = conn.cursor()
+        encrypted_username = encryption.encrypt_data(username)
+        cursor.execute(f"SELECT password FROM accounts WHERE username = '{encrypted_username}'")
+        encrypted_password = cursor.fetchone()[0]
+        password = encryption.decrypt_data(encrypted_password)
+        return password
 
 
-def is_username_taken(username):
+def is_username_taken(username_to_find):
     """
     checking if the given username is found in the data base
-    :param username:
+    :param username_to_find:
     :return:
     """
-    with open(chatApp_constant.data_base_path, "r") as file:
-        all_data_base = file.read().split("\n")
-        all_data_base = all_data_base[:-1]  # the last line in the data base is an empty line
-        if len(all_data_base) >= 1:  # checking if the first line in the data base is empty
-            for user in all_data_base:
-                temp_username = user.split(",")[1]
-                if username == encryption.decrypt_data(temp_username):
-                    return True
+    with sqlite3.connect(chatApp_constant.accounts_db_path) as conn:
+
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT username FROM accounts")
+
+        usernames = cursor.fetchall()
+        for temp_username in usernames:  # the temp_username is in tuple
+            if username_to_find == encryption.decrypt_data(temp_username[0]):
+                return True
     return False
 
 
@@ -196,9 +207,12 @@ def get_number_of_accounts_in_database():
     """
         returns the number of accounts in the data base
     """
-    with open(chatApp_constant.data_base_path, "r") as file:
-        num_of_accounts = len(file.readlines())
-    return num_of_accounts
+    with sqlite3.connect(chatApp_constant.accounts_db_path) as conn:
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT username FROM accounts")
+
+        return len(cursor.fetchall())
 
 
 def insert_data_to_file(username, password):
@@ -212,6 +226,8 @@ def insert_data_to_file(username, password):
     STATIC_NUMBER_OF_ACCOUNTS = get_number_of_accounts_in_database()
     encrypted_username = encryption.encrypt_data(username)
     encrypted_password = encryption.encrypt_data(password)
-    text_to_file = f"{STATIC_NUMBER_OF_ACCOUNTS},{encrypted_username},{encrypted_password}\n"  # the form of the data base
-    with open(chatApp_constant.data_base_path, "a") as file:
-        file.write(text_to_file)
+    with sqlite3.connect(chatApp_constant.accounts_db_path) as conn:
+        cursor = conn.cursor()
+
+        cursor.execute(f"INSERT INTO accounts VALUES ('{encrypted_username}' , '{encrypted_password}')")
+        conn.commit()
