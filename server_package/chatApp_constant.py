@@ -59,7 +59,5 @@ client_disconnected_msg_id = 600
 """ sending messages in order to keep connection alive and know when connection is off"""
 health_check_msg_id = 400
 
-
-data_base_path = r"database.txt"
 accounts_db_path = r"accounts.db"
 #chatApp_constant.accounts_db_path

@@ -1,9 +1,10 @@
 import threading
+from time import sleep
+from os import path
 from server_message import take_apart_msg, Message
 import chatApp_constant
 from server_security import try_create_new_account, check_existing_account, initialize_db
 from set_up_server_socket import *  # setup the socket
-from time import sleep
 
 
 def send_clients_list(client_conn):
@@ -236,5 +237,6 @@ def server_receive():
 
 
 if __name__ == '__main__':
-    #initialize_db()
+    if not path.isfile('accounts.db'): # if the database isnt exists in the directory we're creating it and the table in sql
+        initialize_db()
     server_receive()
